@@ -1,11 +1,11 @@
-FROM gliderlabs/alpine:3.3
+FROM gliderlabs/alpine:3.8
 
 ENV FFMPEG_VERSION=4.1
 
 WORKDIR /tmp/ffmpeg
 
 RUN apk add --update build-base curl nasm tar bzip2 \
-  coreutils zlib-dev openssl-dev yasm-dev lame-dev libogg-dev x264-dev libvpx-dev libvorbis-dev x265-dev freetype-dev libass-dev libwebp-dev rtmpdump-dev libtheora-dev opus-dev && \
+  coreutils zlib-dev openssl-dev yasm-dev lame-dev libogg-dev x264-dev libvpx-dev libvorbis-dev x265-dev freetype-dev libass-dev libwebp-dev rtmpdump-dev libtheora-dev opus-dev nodejs nodejs-npm python make g++ && \
   DIR=$(mktemp -d) && cd ${DIR} && \
   curl -s http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar zxvf - -C . && \
   cd ffmpeg-${FFMPEG_VERSION} && \
@@ -17,9 +17,8 @@ RUN apk add --update build-base curl nasm tar bzip2 \
   rm -rf ${DIR} && \
   apk del build-base curl tar bzip2 x264 openssl nasm && rm -rf /var/cache/apk/*
 
-RUN apk add --no-cache --virtual .gyp python make g++ \
+RUN apk add --no-cache --virtual .gyp \
     && npm install beamcoder \
     && apk del .gyp
 
 ENV UV_THREADPOOL_SIZE=32
-
